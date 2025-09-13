@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Fleeped Task Manager</title>
+   <link rel="stylesheet" href="./main.css">
+</head>
+<body data-theme="light">
+
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="brand">NexTask</div>
+            <div class="nav-actions">
+                <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+                <div class="profile-menu">
+                    <button class="profile-btn" onclick="toggleProfile()">U</button>
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <button onclick="viewProfile()">👤 Profile</button>
+                        <button onclick="showSettings()">⚙️ Settings</button>
+                        <button onclick="logout()">🚪 Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    
+    <div class="main-container">
+        
+        <div class="dashboard-header">
+            <h1>Task Dashboard</h1>
+            <p>Manage your tasks efficiently and stay productive</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon total">📋</div>
+                </div>
+                <div class="stat-number" id="totalTasks">0</div>
+                <div class="stat-label">Total Tasks</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon completed">✅</div>
+                </div>
+                <div class="stat-number" id="completedTasks">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon pending">⏳</div>
+                </div>
+                <div class="stat-number" id="pendingTasks">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon overdue">⚠️</div>
+                </div>
+                <div class="stat-number" id="overdueTasks">0</div>
+                <div class="stat-label">Overdue</div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            
+            <div class="main-content">
+            
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2 class="section-title">Recent Tasks</h2>
+                        <button class="btn" onclick="viewAllTasks()">
+                            View All
+                        </button>
+                    </div>
+                    
+                    <div class="task-filters">
+                        <span class="filter-label">Filter:</span>
+                        <button class="filter-btn active" data-filter="all" onclick="filterTasks('all')">All</button>
+                        <button class="filter-btn" data-filter="pending" onclick="filterTasks('pending')">Pending</button>
+                        <button class="filter-btn" data-filter="completed" onclick="filterTasks('completed')">Completed</button>
+                        <button class="filter-btn" data-filter="high" onclick="filterTasks('high')">High Priority</button>
+                    </div>
+                    
+                    <div id="recentTasks" class="task-list">
+                        
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-header">
+                        <h2 class="section-title">Progress Overview</h2>
+                        <button class="btn btn-secondary" onclick="viewDetailedStats()">
+                            View Details
+                        </button>
+                    </div>
+                    <div class="progress-chart">
+                        <div class="progress-ring" id="progressRing">
+                            <div class="progress-text" id="progressText">0%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+          
+            <div class="sidebar">
+        
+                <div class="calendar-widget">
+                    <div class="calendar-header">
+                        <h3 class="section-title">Calendar</h3>
+                        <div>
+                            <button class="calendar-nav" onclick="previousMonth()">‹</button>
+                            <span id="currentMonth"></span>
+                            <button class="calendar-nav" onclick="nextMonth()">›</button>
+                        </div>
+                    </div>
+                    <div class="calendar-grid" id="calendar">
+                        
+                    </div>
+                </div>
+
+               
+                <div class="section-card">
+                    <h3 class="section-title">Quick Actions</h3>
+                    <div class="quick-actions">
+                        <button class="btn" onclick="addNewTask()">
+                            ➕ Add Task
+                        </button>
+                        <button class="btn btn-secondary" onclick="viewCalendar()">
+                            📅 Calendar View
+                        </button>
+                        <button class="btn btn-secondary" onclick="viewProfile()">
+                            👤 Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="fab" onclick="addNewTask()">+</button>
+
+    
+    <div class="modal" id="calendarModal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Calendar View</h3>
+                <button class="close-btn" onclick="closeCalendarModal()">&times;</button>
+            </div>
+            <div class="calendar-full-view">
+                <div class="calendar-nav-header">
+                    <button class="calendar-nav" onclick="previousMonthFull()">&larr; Previous</button>
+                    <h3 id="currentMonthFull"></h3>
+                    <button class="calendar-nav" onclick="nextMonthFull()">Next &rarr;</button>
+                </div>
+                <div class="calendar-full-grid" id="calendarFull">
+                    
+                </div>
+            </div>
+            <div class="selected-date-tasks" id="selectedDateTasks" style="display: none;">
+                <h4>Tasks for <span id="selectedDateLabel"></span>:</h4>
+                <div id="selectedTasksList"></div>
+            </div>
+        </div>
+    </div>
+]]
+    <div class="modal" id="profileModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Profile</h3>
+                <button class="close-btn" onclick="closeProfileModal()">&times;</button>
+            </div>
+            <div class="profile-container">
+                <div class="profile-sidebar">
+                    <div class="profile-avatar">
+                        <div class="avatar-circle">U</div>
+                    </div>
+                    <div class="profile-nav">
+                        <button class="profile-nav-btn active" onclick="showProfileTab('profile')">👤 Profile</button>
+                        <button class="profile-nav-btn" onclick="showProfileTab('notifications')">🔔 Notifications</button>
+                        <button class="profile-nav-btn" onclick="showProfileTab('security')">🔒 Security</button>
+                        <button class="profile-nav-btn" onclick="showProfileTab('sync')">🔄 Sync</button>
+                    </div>
+                </div>
+                <div class="profile-content">
+                    <div id="profileTab" class="profile-tab active">
+                        <form id="profileForm" onsubmit="saveProfile(event)">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="firstName">First Name</label>
+                                    <input type="text" id="firstName" class="form-input" value="Jane">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="lastName">Last Name</label>
+                                    <input type="text" id="lastName" class="form-input" value="Doe">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label" for="profileEmail">Email</label>
+                                    <input type="email" id="profileEmail" class="form-input" value="abc@example.com">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="phoneNumber">Phone Number</label>
+                                    <input type="tel" id="phoneNumber" class="form-input" value="+123456789">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="bio">Bio</label>
+                                <textarea id="bio" class="form-textarea" placeholder="Tell us about yourself...">Passionate task manager and productivity enthusiast.</textarea>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div id="notificationsTab" class="profile-tab">
+                        <h4>Notification Settings</h4>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" checked> Email notifications for new tasks
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" checked> Push notifications for due dates
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox"> Weekly task summary
+                            </label>
+                        </div>
+                    </div>
+                    <div id="securityTab" class="profile-tab">
+                        <h4>Security Settings</h4>
+                        <div class="form-group">
+                            <label class="form-label">Change Password</label>
+                            <input type="password" class="form-input" placeholder="Current password">
+                            <input type="password" class="form-input" placeholder="New password" style="margin-top: 0.5rem;">
+                        </div>
+                        <button class="btn btn-secondary">Update Password</button>
+                    </div>
+                    <div id="syncTab" class="profile-tab">
+                        <h4>Sync Settings</h4>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox" checked> Auto-sync across devices
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label class="setting-label">
+                                <input type="checkbox"> Sync with calendar apps
+                            </label>
+                        </div>
+                        <button class="btn">Sync Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add New Task</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="taskForm" onsubmit="saveTask(event)">
+                <div class="form-group">
+                    <label class="form-label" for="taskTitle">Task Title</label>
+                    <input type="text" id="taskTitle" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="taskDescription">Description</label>
+                    <textarea id="taskDescription" class="form-textarea"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="taskPriority">Priority</label>
+                    <select id="taskPriority" class="form-select">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="taskCategory">Category</label>
+                    <input type="text" id="taskCategory" class="form-input" placeholder="e.g., Work, Personal">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="taskDueDate">Due Date</label>
+                    <input type="date" id="taskDueDate" class="form-input">
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn">Save Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="./main.js"></script>
+    </body>
+</html>
